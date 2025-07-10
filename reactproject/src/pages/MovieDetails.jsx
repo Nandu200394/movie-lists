@@ -40,6 +40,8 @@ function MovieDetails() {
         <h2>{movie.title}</h2>
         <p><strong>Release Date:</strong> {movie.release_date}</p>
         <p><strong>Rating:</strong> {movie.vote_average}</p>
+        <p><strong>Original_title:</strong> {movie.original_title}</p>
+         <p><strong>Original_language:</strong> {movie.original_language}</p>
         <p><strong>Overview:</strong> {movie.overview}</p>
         <p><strong>Genres:</strong> {movie.genres.map((g) => g.name).join(", ")}</p>
         <p><strong>Runtime:</strong> {movie.runtime} minutes</p>
