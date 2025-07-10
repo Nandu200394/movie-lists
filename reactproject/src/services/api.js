@@ -37,7 +37,7 @@ export const getPopularMovies =()=>{
   });
  
 };
-export const -searchMovies = (query) => {
+export const searchMovies = (query) => {
    return axios.get(`${BASE_URL}/search/movie`, {
     params: {
       api_key: API_KEY,
