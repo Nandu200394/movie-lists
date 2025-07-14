@@ -1,0 +1,19 @@
+
+.movie-row-posters {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+}
+
+.movie-row-posters::-webkit-scrollbar {
+  height: 6px;
+}
+
+.movie-row-posters::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 10px;
+}
+

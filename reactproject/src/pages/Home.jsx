@@ -1,76 +1,90 @@
-import MovieCard from "../components/MovieCard";
-import { useState, useEffect } from "react";
-import { searchMovies, getPopularMovies } from "../services/api";
-import "../css/Home.css";
+
+
+import { useEffect, useState } from "react";
+import MovieRow from "../components/Movie";
+import {
+  getTopRatedMovies,
+  getPopularMovies,
+  getActionIndianMovies,
+  getLatestMovies,
+  searchMovies,
+  getCrimeTv,
+} from "../services/api";
 
 function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [movies, setMovies] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [top10, setTop10] = useState([]);
+  const [nextWatch, setNextWatch] = useState([]);
+  const [watchLater, setWatchLater] = useState([]);
+  const [actionIndia, setActionIndia] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [crimeshows, setCrimeShows] = useState([]);
+
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
-    const loadPopularMovies = async () => {
+    const fetchData = async () => {
       try {
-        const popularMovies = await getPopularMovies();
-        setMovies(popularMovies);
+        const topRated = await getTopRatedMovies();
+        const popular = await getPopularMovies();
+        const action = await getActionIndianMovies();
+        const latest = await getLatestMovies();
+        const crime =await getCrimeTv();
+
+        setTop10(topRated.slice(0, 10));
+        setNextWatch(popular.slice(0, 10));
+        setActionIndia(action.slice(0, 10));
+        setWatchLater(latest.slice(0, 10));
+        setCrimeShows(crime.slice(0, 10));
       } catch (err) {
-        console.log(err);
-        setError("Failed to load movies...");
-      } finally {
-        setLoading(false);
+        console.error("Error fetching data", err);
       }
     };
 
-    loadPopularMovies();
+    fetchData();
   }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!searchQuery.trim()) return
-    if (loading) return
-
-    setLoading(true)
+    if (!query.trim()) return;
     try {
-        const searchResults = await searchMovies(searchQuery)
-        setMovies(searchResults)
-        setError(null)
+      const results = await searchMovies(query);
+      setSearchResults(results);
     } catch (err) {
-        console.log(err)
-        setError("Failed to search movies...")
-    } finally {
-        setLoading(false)
+      console.error("Search failed:", err);
     }
   };
 
   return (
-    <div className="home">
-      <form onSubmit={handleSearch} className="search-form">
+    <div className="home" style={{ backgroundColor: "#111", padding: "20px" , color:"goldenrod"}}>
+    
+      <form onSubmit={handleSearch} className="search-form" style={{ marginBottom: "20px" }}>
         <input
           type="text"
           placeholder="Search for movies..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           className="search-input"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ padding: "10px", width: "300px", borderRadius: "6px", border: "none" }}
         />
-        <button type="submit" className="search-button">
+        <button
+          type="submit"
+          style={{ marginLeft: "10px", padding: "10px 20px", borderRadius: "6px", cursor: "pointer" }}
+        >
           Search
         </button>
       </form>
-
-        {error && <div className="error-message">{error}</div>}
-
-      {loading ? (
-        <div className="loading">Loading...</div>
-      ) : (
-        <div className="movies-grid">
-          {movies.map((movie) => (
-            <MovieCard movie={movie} key={movie.id} />
-          ))}
-        </div>
+      {searchResults.length > 0 && (
+        <MovieRow title={`Search Results for "${query}"`} movies={searchResults} />
       )}
+
+      <MovieRow title="Top 10 Movies Today" movies={top10} />
+      <MovieRow title="Your Next Watch" movies={nextWatch} />
+      <MovieRow title="Watch It Again" movies={watchLater} />
+      <MovieRow title="Indian Action & Adventure" movies={actionIndia} />
+      <MovieRow title="Crime Tv Shows" movies={crimeshows} />
     </div>
   );
 }
 
 export default Home;
+

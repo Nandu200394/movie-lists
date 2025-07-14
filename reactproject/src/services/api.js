@@ -18,7 +18,7 @@ export const searchMovies = async (query) => {
 };
 */
 
-import axios from 'axios';
+/*import axios from 'axios';
 const API_KEY = "e3132cb9fe3c155bc261308bc2fc35d2";
 const BASE_URL = "https://api.themoviedb.org/3";
 export const getPopularMovies =()=>{
@@ -51,4 +51,35 @@ export const searchMovies = (query) => {
     console.error("Error fetching data:", error);
     return [];
   });
+};*/
+// services/api.js
+// services/api.js
+import axios from "axios";
+
+const API_KEY = "e3132cb9fe3c155bc261308bc2fc35d2";
+const BASE_URL = "https://api.themoviedb.org/3";
+
+const fetchFromTMDB = (endpoint, extraParams = {}) => {
+  return axios
+    .get(`${BASE_URL}${endpoint}`, {
+      params: { api_key: API_KEY, ...extraParams },
+    })
+    .then((res) => res.data.results)
+    .catch((err) => {
+      console.error("API error:", err);
+      return [];
+    });
 };
+
+export const getTopRatedMovies = () => fetchFromTMDB("/movie/top_rated");
+export const getPopularMovies = () => fetchFromTMDB("/movie/popular");
+export const getActionIndianMovies = () =>
+  fetchFromTMDB("/discover/movie", { with_genres: 28, region: "IN" });
+export const getLatestMovies = () =>
+  fetchFromTMDB("/discover/movie", { sort_by: "release_date.desc" });
+export const getCrimeTv =  () => 
+  fetchFromTMDB("/discover/tv",{with_genres:80}); 
+export const searchMovies = (query) =>
+  fetchFromTMDB("/search/movie", { query });
+
+         
